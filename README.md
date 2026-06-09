@@ -14,14 +14,17 @@ npx mokout init
 
 - **`git init`** — version-controlled from the first commit
 - **Package manager** — [`uv`](https://docs.astral.sh/uv/) (Python) or `npm` (JavaScript)
-- **`CLAUDE.md`** — a workflow doctrine for Claude / coding agents (created, or appended if one exists)
-- **`AGENTS.md`** — symlinked to `CLAUDE.md`, so any agent following the cross-tool standard reads the same doctrine
-- **`tasks/`** — `todo.md` + `lessons.md`, referenced by the workflow doctrine
+- **`CLAUDE.md`** — a workflow doctrine for coding agents, auto-tailored with a **Project Setup** section (your actual `just`/lint/test commands) and a **Definition of Done**
+- **`AGENTS.md`**, **`.cursorrules`**, **`.github/copilot-instructions.md`** — all symlinked to `CLAUDE.md`, so Claude, Cursor, and Copilot read one source of truth
+- **`.claude/settings.json`** — a permission allowlist for the project's safe commands, so Claude Code runs them without prompting
+- **`tasks/`** — structured `todo.md` + `lessons.md`, referenced by the doctrine
 - **Modern tooling** — see below
 - **`.env.example`** + **`.editorconfig`**
 
-It is **idempotent and safe**: existing files are never overwritten (only
-`CLAUDE.md` is appended to). Run it in a fresh directory or an existing project.
+It is **idempotent and safe**: existing files are never overwritten. The
+`CLAUDE.md` doctrine lives in a managed block (`<!-- mokout:doctrine -->`) that
+mokout updates in place on re-run — any content you add around it is preserved.
+Run it in a fresh directory or an existing project.
 
 ### Tooling per stack
 
@@ -45,16 +48,17 @@ mokout init --dry-run    # print what would be created, write nothing
 ### Add just the agent files to an existing project
 
 Already have a project and only want it agent-ready? `add agents` drops in
-`CLAUDE.md`, the `AGENTS.md` symlink, and `tasks/` — no package manager, git,
-or tooling changes:
+`CLAUDE.md`, the agent-instruction symlinks (`AGENTS.md`, `.cursorrules`,
+`.github/copilot-instructions.md`), and `tasks/` — no package manager, git, or
+tooling changes:
 
 ```bash
-mokout add agents            # add CLAUDE.md + AGENTS.md + tasks/ here
+mokout add agents            # add CLAUDE.md + agent symlinks + tasks/ here
 mokout add agents --dry-run  # preview
 ```
 
-Idempotent: re-running appends the doctrine to `CLAUDE.md` and leaves
-everything else untouched.
+Idempotent: re-running refreshes the doctrine's managed block in `CLAUDE.md`
+and leaves everything else (including your own notes) untouched.
 
 After scaffolding:
 

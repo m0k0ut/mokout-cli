@@ -1,8 +1,7 @@
-// The CLAUDE.md content emitted into every scaffolded project.
-// This is the user's workflow doctrine — kept verbatim. It is NOT the
-// mokout repo's own CLAUDE.md (that lives at the repo root and documents
-// how to work on mokout itself).
-export const CLAUDE_MD = `## Workflow Orchestration
+// The workflow doctrine emitted into every scaffolded project's CLAUDE.md
+// (inside a mokout-managed block). This is NOT the mokout repo's own
+// CLAUDE.md — that lives at the repo root and documents how to work on mokout.
+export const DOCTRINE = `## Workflow Orchestration
 
 ### 1. Plan Node Default
 - Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
@@ -14,7 +13,7 @@ export const CLAUDE_MD = `## Workflow Orchestration
 - Use subagents liberally to keep main context window clean
 - Offload research, exploration, and parallel analysis to subagents
 - For complex problems, throw more compute at it via subagents
-- One tack per subagent for focused execution
+- One task per subagent for focused execution
 
 ### 3. Self-Improvement Loop
 - After ANY correction from the user: update \`tasks/lessons.md\` with the pattern
@@ -53,5 +52,5 @@ export const CLAUDE_MD = `## Workflow Orchestration
 
 - **Simplicity First**: Make every change as simple as possible. Impact minimal code.
 - **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
-- **Minimat Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
+- **Minimal Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
 `;

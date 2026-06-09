@@ -37,14 +37,13 @@ export class InitCommand extends Command {
     }
 
     const files = filesFor(stack);
+    // A managed file (CLAUDE.md) can appear under multiple markers — show once.
+    const paths = [...new Set(files.map((f) => f.path))];
     const links = SYMLINKS.map((l) => `${l.path} -> ${l.target}`);
     const initCmd = stack === "javascript" ? "npm init -y" : "uv init";
 
     if (this.dryRun) {
-      p.note(
-        ["git init", initCmd, ...files.map((f) => f.path), ...links].join("\n"),
-        "Would create",
-      );
+      p.note(["git init", initCmd, ...paths, ...links].join("\n"), "Would create");
       p.outro("Dry run — nothing written.");
       return 0;
     }
@@ -83,7 +82,7 @@ export class InitCommand extends Command {
     s.stop("Files written");
 
     p.note(
-      [...files.map((f) => `• ${f.path}`), ...links.map((l) => `• ${l}`)].join("\n"),
+      [...paths.map((f) => `• ${f}`), ...links.map((l) => `• ${l}`)].join("\n"),
       `Scaffolded (${stack})`,
     );
     p.outro("Done. Review CLAUDE.md, then run `just` to see project commands.");

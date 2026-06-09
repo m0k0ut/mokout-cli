@@ -54,11 +54,14 @@ never fail to find its templates. Keep it that way.
 
 **Add/change a scaffolded file:** edit the relevant `src/templates/*.ts`
 constant and add an entry to `src/templates/index.ts`. A `TemplateFile` has a
-`mode`: `"skip"` (never overwrite) or `"append"` (create-or-append, like
-CLAUDE.md). Nothing else to wire up.
+`mode`: `"skip"` (write only if absent — never clobber) or `"managed"` (own a
+marked region by `marker`, replaced in place on re-run; CLAUDE.md uses two:
+`doctrine` and `project`). Nothing else to wire up.
 
-**Add a new stack:** add a `Stack` member and a `STACK[...]` entry in
-`src/templates/index.ts`, plus a `src/templates/<stack>.ts` module.
+**Add a new stack:** add a `Stack` member plus `STACK[...]` and
+`STACK_AGENT_EXTRAS[...]` entries in `src/templates/index.ts`, and a
+`src/templates/<stack>.ts` module (exporting tooling configs, `SETUP`, and
+`SETTINGS_JSON`).
 
 **Add a sub-generator** (`mokout add tool/...`): copy `src/commands/add-agents.ts`
 as the template. Add a Clipanion command (path like `["add", "<thing>"]`), build

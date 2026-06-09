@@ -31,10 +31,11 @@ export class AddAgentsCommand extends Command {
     p.intro("mokout add agents");
 
     const files = agentFiles();
+    const paths = [...new Set(files.map((f) => f.path))];
     const links = SYMLINKS.map((l) => `${l.path} -> ${l.target}`);
 
     if (this.dryRun) {
-      p.note([...files.map((f) => f.path), ...links].join("\n"), "Would create");
+      p.note([...paths, ...links].join("\n"), "Would create");
       p.outro("Dry run — nothing written.");
       return 0;
     }
@@ -51,7 +52,7 @@ export class AddAgentsCommand extends Command {
     await plop.getGenerator("add-agents").runActions({});
     s.stop("Agent files added");
 
-    p.note([...files.map((f) => `• ${f.path}`), ...links.map((l) => `• ${l}`)].join("\n"), "Added");
+    p.note([...paths.map((f) => `• ${f}`), ...links.map((l) => `• ${l}`)].join("\n"), "Added");
     p.outro("Done. CLAUDE.md holds the doctrine; AGENTS.md mirrors it for other agents.");
     return 0;
   }

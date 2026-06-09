@@ -62,6 +62,42 @@ hooks:
     lefthook install
 `;
 
+// Goes into CLAUDE.md's "project" managed block — concrete, actionable facts
+// agents need (auto-populated because mokout set this tooling up).
+export const SETUP = `## Project Setup
+
+- **Stack:** Python (uv + ruff)
+- **Run:** \`uv run <script>\` · **Add deps:** \`uv add <pkg>\`
+- **Lint + format:** \`just lint\` / \`just fmt\` (ruff)
+- **Test:** \`just test\` (pytest)
+- **Git hooks:** \`just hooks\` (lefthook)
+
+## Definition of Done
+
+- \`just lint\` and \`just test\` pass
+- No secrets committed — use \`.env\` (see \`.env.example\`)
+- Change is minimal and verified (see "Verification Before Done")`;
+
+// .claude/settings.json — pre-approve this project's safe commands so agents
+// run them without a permission prompt. Bash matchers use the \`:*\` prefix form.
+export const SETTINGS_JSON = `{
+  "permissions": {
+    "allow": [
+      "Bash(just:*)",
+      "Bash(uv:*)",
+      "Bash(uvx:*)",
+      "Bash(ruff:*)",
+      "Bash(pytest:*)",
+      "Bash(lefthook:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": ["Read(./.env)", "Read(./.env.*)"]
+  }
+}
+`;
+
 export const CI_YML = `name: CI
 on:
   push:

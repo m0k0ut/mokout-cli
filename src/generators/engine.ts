@@ -1,4 +1,11 @@
-import { appendFileSync, existsSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import type { ActionType, CustomActionFunction, NodePlopAPI } from "node-plop";
 import type { SymlinkSpec, TemplateFile } from "../templates";
@@ -11,24 +18,38 @@ export interface GeneratorSpec {
   symlinks?: SymlinkSpec[];
 }
 
-// Turn a "create, or append if present" file into a node-plop custom action.
-// node-plop's built-in `append` requires the file to already exist, so we
-// roll our own to keep CLAUDE.md idempotent on re-runs.
-function appendAction(file: TemplateFile): CustomActionFunction {
+const escapeRegExp = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// Own a marked region of a file. The region is delimited by HTML comments
+// (invisible in rendered markdown) so we can update it on re-run without
+// clobbering the user's own content. Idempotent: replace the region if it
+// exists, append it if the file exists without one, or create the file.
+function managedAction(file: TemplateFile): CustomActionFunction {
+  const marker = file.marker ?? "mokout";
+  const begin = `<!-- mokout:${marker}:start -->`;
+  const end = `<!-- mokout:${marker}:end -->`;
+  const block = `${begin}\n${file.content}\n${end}\n`;
+
   return (_answers, _config, plop) => {
     const dest = join(plop.getDestBasePath(), file.path);
-    if (existsSync(dest)) {
-      appendFileSync(dest, `\n${file.content}`);
-      return `appended ${file.path}`;
+    if (!existsSync(dest)) {
+      mkdirSync(dirname(dest), { recursive: true });
+      writeFileSync(dest, block);
+      return `created ${file.path} [${marker}]`;
     }
-    mkdirSync(dirname(dest), { recursive: true });
-    writeFileSync(dest, file.content);
-    return `created ${file.path}`;
+    const current = readFileSync(dest, "utf8");
+    const region = new RegExp(`${escapeRegExp(begin)}[\\s\\S]*?${escapeRegExp(end)}\\n?`);
+    if (region.test(current)) {
+      writeFileSync(dest, current.replace(region, block));
+      return `updated ${file.path} [${marker}]`;
+    }
+    appendFileSync(dest, `${current.endsWith("\n") ? "\n" : "\n\n"}${block}`);
+    return `added ${file.path} [${marker}]`;
   };
 }
 
 function toAction(file: TemplateFile): ActionType {
-  if (file.mode === "append") return appendAction(file);
+  if (file.mode === "managed") return managedAction(file);
   // skip mode: write only when absent — never clobber the user's files.
   return { type: "add", path: file.path, template: file.content, skipIfExists: true };
 }
@@ -40,6 +61,7 @@ function symlinkAction(link: SymlinkSpec): CustomActionFunction {
   return (_answers, _config, plop) => {
     const dest = join(plop.getDestBasePath(), link.path);
     try {
+      mkdirSync(dirname(dest), { recursive: true });
       symlinkSync(link.target, dest);
       return `linked ${link.path} -> ${link.target}`;
     } catch (err) {
