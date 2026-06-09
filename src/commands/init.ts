@@ -2,8 +2,12 @@ import * as p from "@clack/prompts";
 import { Command, Option } from "clipanion";
 import nodePlop from "node-plop";
 import { registerGenerator } from "../generators/engine";
-import { exists, hasCommand, run } from "../lib/exec";
+import { exists, hasCommand, remove, run } from "../lib/exec";
 import { SYMLINKS, type Stack, filesFor } from "../templates";
+
+// Sample files `uv init` drops in that we strip — keep pyproject.toml and
+// .python-version, lose the boilerplate.
+const UV_BOILERPLATE = ["hello.py", "main.py", "README.md"];
 
 export class InitCommand extends Command {
   static override paths = [["init"], Command.Default];
@@ -65,7 +69,12 @@ export class InitCommand extends Command {
         p.cancel("uv not found on PATH — install from https://docs.astral.sh/uv/");
         return 1;
       }
+      // Only strip boilerplate uv creates this run — never a file the user already had.
+      const preexisting = UV_BOILERPLATE.filter((f) => exists(cwd, f));
       run("uv", ["init"], cwd);
+      for (const f of UV_BOILERPLATE) {
+        if (!preexisting.includes(f)) remove(cwd, f);
+      }
     }
 
     // 3. Project files + CLAUDE.md, via the shared generator engine.

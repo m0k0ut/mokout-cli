@@ -1,10 +1,15 @@
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 /** True if `rel` exists under `cwd`. */
 export function exists(cwd: string, rel: string): boolean {
   return existsSync(join(cwd, rel));
+}
+
+/** Delete `rel` under `cwd` if present (no error if missing). */
+export function remove(cwd: string, rel: string): void {
+  rmSync(join(cwd, rel), { force: true });
 }
 
 /** True if `cmd` is resolvable on PATH. */
