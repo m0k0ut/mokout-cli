@@ -90,6 +90,10 @@ export class InitCommand extends Command {
     if (this.js) return "javascript";
     if (this.python) return "python";
 
+    // No flag and no interactive terminal (piped, CI, npx in a script): fall back
+    // to the default stack instead of crashing on an impossible prompt.
+    if (!process.stdin.isTTY) return "python";
+
     const choice = await p.select({
       message: "Project stack?",
       initialValue: "python" as Stack,
