@@ -9,6 +9,9 @@ import { SYMLINKS, type Stack, filesFor } from "../templates";
 // .python-version, lose the boilerplate.
 const UV_BOILERPLATE = ["hello.py", "main.py", "README.md"];
 
+// Dev tooling the scaffold's own commands need (`just test`, `just lint`).
+const PY_DEV_DEPS = ["pytest", "ruff"];
+
 export class InitCommand extends Command {
   static override paths = [["init"], Command.Default];
 
@@ -44,10 +47,13 @@ export class InitCommand extends Command {
     // A managed file (CLAUDE.md) can appear under multiple markers — show once.
     const paths = [...new Set(files.map((f) => f.path))];
     const links = SYMLINKS.map((l) => `${l.path} -> ${l.target}`);
-    const initCmd = stack === "javascript" ? "npm init -y" : "uv init";
+    const steps =
+      stack === "javascript"
+        ? ["npm init -y"]
+        : ["uv init", `uv add --dev ${PY_DEV_DEPS.join(" ")}`];
 
     if (this.dryRun) {
-      p.note(["git init", initCmd, ...paths, ...links].join("\n"), "Would create");
+      p.note(["git init", ...steps, ...paths, ...links].join("\n"), "Would create");
       p.outro("Dry run — nothing written.");
       return 0;
     }
@@ -74,6 +80,17 @@ export class InitCommand extends Command {
       run("uv", ["init"], cwd);
       for (const f of UV_BOILERPLATE) {
         if (!preexisting.includes(f)) remove(cwd, f);
+      }
+
+      // Dev tooling so `just test` / `just lint` work out of the box. Non-fatal:
+      // an offline `uv add` shouldn't abort an otherwise-complete scaffold.
+      const dep = p.spinner();
+      dep.start(`Adding dev dependencies (${PY_DEV_DEPS.join(", ")})`);
+      try {
+        run("uv", ["add", "--dev", ...PY_DEV_DEPS], cwd);
+        dep.stop(`Dev dependencies added (${PY_DEV_DEPS.join(", ")})`);
+      } catch {
+        dep.stop(`Skipped dev deps — run \`uv add --dev ${PY_DEV_DEPS.join(" ")}\` (offline?)`);
       }
     }
 
