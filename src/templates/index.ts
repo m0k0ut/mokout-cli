@@ -1,7 +1,7 @@
 import { DOCTRINE } from "./claude";
 import * as js from "./javascript";
 import * as py from "./python";
-import { EDITORCONFIG, ENV_EXAMPLE, TASKS_LESSONS, TASKS_TODO } from "./shared";
+import { ENV_EXAMPLE, TASKS_LESSONS, TASKS_TODO } from "./shared";
 
 export type Stack = "python" | "javascript";
 
@@ -26,15 +26,9 @@ export interface SymlinkSpec {
   target: string;
 }
 
-// Mirror the doctrine to the conventions other agents read. AGENTS.md is the
-// cross-tool standard; .cursorrules (Cursor) and copilot-instructions.md
-// (GitHub Copilot) get the same single source of truth via symlink. Targets
-// are relative to each link's directory — the Copilot one sits in .github/.
-export const SYMLINKS: SymlinkSpec[] = [
-  { path: "AGENTS.md", target: "CLAUDE.md" },
-  { path: ".cursorrules", target: "CLAUDE.md" },
-  { path: ".github/copilot-instructions.md", target: "../CLAUDE.md" },
-];
+// AGENTS.md is the cross-tool standard; pointing it at CLAUDE.md gives every
+// agent one source of truth without adding more files.
+export const SYMLINKS: SymlinkSpec[] = [{ path: "AGENTS.md", target: "CLAUDE.md" }];
 
 // CLAUDE.md doctrine region — shared by `init` and `add agents`.
 const DOCTRINE_FILE: TemplateFile = {
@@ -55,7 +49,6 @@ const AGENT_FILES: TemplateFile[] = [
 
 // General project hygiene, written by `init` only.
 const PROJECT_FILES: TemplateFile[] = [
-  { path: ".editorconfig", content: EDITORCONFIG, mode: "skip" },
   { path: ".env.example", content: ENV_EXAMPLE, mode: "skip" },
 ];
 
@@ -75,20 +68,13 @@ const STACK_AGENT_EXTRAS: Record<Stack, TemplateFile[]> = {
   ],
 };
 
+// Stack-specific config. Python's ruff config is folded into pyproject.toml
+// (appended after `uv init`), so there's no ruff.toml here.
 const STACK: Record<Stack, TemplateFile[]> = {
-  python: [
-    { path: ".gitignore", content: py.GITIGNORE, mode: "skip" },
-    { path: "ruff.toml", content: py.RUFF_TOML, mode: "skip" },
-    { path: "lefthook.yml", content: py.LEFTHOOK_YML, mode: "skip" },
-    { path: "justfile", content: py.JUSTFILE, mode: "skip" },
-    { path: ".github/workflows/ci.yml", content: py.CI_YML, mode: "skip" },
-  ],
+  python: [{ path: ".gitignore", content: py.GITIGNORE, mode: "skip" }],
   javascript: [
     { path: ".gitignore", content: js.GITIGNORE, mode: "skip" },
     { path: "biome.json", content: js.BIOME_JSON, mode: "skip" },
-    { path: "lefthook.yml", content: js.LEFTHOOK_YML, mode: "skip" },
-    { path: "justfile", content: js.JUSTFILE, mode: "skip" },
-    { path: ".github/workflows/ci.yml", content: js.CI_YML, mode: "skip" },
   ],
 };
 

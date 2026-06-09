@@ -2,14 +2,15 @@ import * as p from "@clack/prompts";
 import { Command, Option } from "clipanion";
 import nodePlop from "node-plop";
 import { registerGenerator } from "../generators/engine";
-import { exists, hasCommand, remove, run } from "../lib/exec";
+import { appendText, exists, hasCommand, readText, remove, run } from "../lib/exec";
 import { SYMLINKS, type Stack, filesFor } from "../templates";
+import { RUFF_PYPROJECT } from "../templates/python";
 
 // Sample files `uv init` drops in that we strip — keep pyproject.toml and
 // .python-version, lose the boilerplate.
 const UV_BOILERPLATE = ["hello.py", "main.py", "README.md"];
 
-// Dev tooling the scaffold's own commands need (`just test`, `just lint`).
+// Dev tooling the scaffold's commands need (`uv run pytest`, `uv run ruff`).
 const PY_DEV_DEPS = ["pytest", "ruff"];
 
 export class InitCommand extends Command {
@@ -82,8 +83,8 @@ export class InitCommand extends Command {
         if (!preexisting.includes(f)) remove(cwd, f);
       }
 
-      // Dev tooling so `just test` / `just lint` work out of the box. Non-fatal:
-      // an offline `uv add` shouldn't abort an otherwise-complete scaffold.
+      // Dev tooling so `uv run pytest` / `uv run ruff` work out of the box.
+      // Non-fatal: an offline `uv add` shouldn't abort an otherwise-complete scaffold.
       const dep = p.spinner();
       dep.start(`Adding dev dependencies (${PY_DEV_DEPS.join(", ")})`);
       try {
@@ -91,6 +92,12 @@ export class InitCommand extends Command {
         dep.stop(`Dev dependencies added (${PY_DEV_DEPS.join(", ")})`);
       } catch {
         dep.stop(`Skipped dev deps — run \`uv add --dev ${PY_DEV_DEPS.join(" ")}\` (offline?)`);
+      }
+
+      // Fold ruff config into the pyproject.toml uv just created (no ruff.toml).
+      const pyproject = readText(cwd, "pyproject.toml");
+      if (pyproject && !pyproject.includes("[tool.ruff]")) {
+        appendText(cwd, "pyproject.toml", `\n${RUFF_PYPROJECT}`);
       }
     }
 
@@ -111,7 +118,7 @@ export class InitCommand extends Command {
       [...paths.map((f) => `• ${f}`), ...links.map((l) => `• ${l}`)].join("\n"),
       `Scaffolded (${stack})`,
     );
-    p.outro("Done. Review CLAUDE.md, then run `just` to see project commands.");
+    p.outro("Done. CLAUDE.md lists the project commands; AGENTS.md mirrors it.");
     return 0;
   }
 

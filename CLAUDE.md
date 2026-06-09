@@ -12,9 +12,11 @@
 
 ## What mokout is
 
-A scaffolding CLI for agentic AI projects. `mokout init` sets up a project in
-one command: version control, a package manager (uv for Python, npm for JS),
-a Claude-ready `CLAUDE.md`, and modern tooling (ruff/biome, lefthook, just, CI).
+A scaffolding CLI for agentic AI projects. `mokout init` sets up a lean,
+essentials-only project in one command: version control, a package manager
+(uv for Python, npm for JS), a Claude-ready `CLAUDE.md` (+ `AGENTS.md` symlink),
+`tasks/`, `.claude/settings.json`, and lint config (ruff in pyproject / biome).
+No justfile/hooks/CI cruft — kept deliberately minimal.
 
 Run via `npx mokout init` — no install required.
 
@@ -40,10 +42,10 @@ src/
 ├── lib/exec.ts             # exists() / hasCommand() / run() helpers
 └── templates/
     ├── index.ts            # the manifest: agentFiles(), filesFor(stack), SYMLINKS
-    ├── claude.ts           # CLAUDE_MD emitted into scaffolded projects
-    ├── shared.ts           # editorconfig / env / tasks content
-    ├── python.ts           # uv + ruff + lefthook + just
-    └── javascript.ts       # npm + biome + lefthook + just
+    ├── claude.ts           # DOCTRINE emitted into scaffolded projects
+    ├── shared.ts           # env / tasks content
+    ├── python.ts           # uv + ruff (ruff config folded into pyproject.toml)
+    └── javascript.ts       # npm + biome
 ```
 
 Templates are **inline string constants**, bundled into `dist/cli.js` by tsup.

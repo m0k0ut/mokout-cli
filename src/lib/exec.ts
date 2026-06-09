@@ -1,10 +1,24 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, rmSync } from "node:fs";
+import { appendFileSync, existsSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 
 /** True if `rel` exists under `cwd`. */
 export function exists(cwd: string, rel: string): boolean {
   return existsSync(join(cwd, rel));
+}
+
+/** Read `rel` under `cwd`, or null if it doesn't exist. */
+export function readText(cwd: string, rel: string): string | null {
+  try {
+    return readFileSync(join(cwd, rel), "utf8");
+  } catch {
+    return null;
+  }
+}
+
+/** Append `text` to `rel` under `cwd`. */
+export function appendText(cwd: string, rel: string, text: string): void {
+  appendFileSync(join(cwd, rel), text);
 }
 
 /** Delete `rel` under `cwd` if present (no error if missing). */
