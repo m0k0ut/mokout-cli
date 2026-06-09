@@ -1,7 +1,15 @@
 import { appendFileSync, existsSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import type { ActionType, CustomActionFunction, NodePlopAPI } from "node-plop";
-import { SYMLINKS, type Stack, type SymlinkSpec, type TemplateFile, filesFor } from "../templates";
+import type { SymlinkSpec, TemplateFile } from "../templates";
+
+/** A generator = a set of files to write plus symlinks to create. */
+export interface GeneratorSpec {
+  name: string;
+  description: string;
+  files: TemplateFile[];
+  symlinks?: SymlinkSpec[];
+}
 
 // Turn a "create, or append if present" file into a node-plop custom action.
 // node-plop's built-in `append` requires the file to already exist, so we
@@ -26,8 +34,8 @@ function toAction(file: TemplateFile): ActionType {
 }
 
 // Create a relative symlink (portable across clone/move). Idempotent, and never
-// fails the scaffold: a filesystem that disallows symlinks (e.g. Windows without
-// Developer Mode) is reported and skipped rather than aborting init.
+// fails the run: a filesystem that disallows symlinks (e.g. Windows without
+// Developer Mode) is reported and skipped rather than aborting.
 function symlinkAction(link: SymlinkSpec): CustomActionFunction {
   return (_answers, _config, plop) => {
     const dest = join(plop.getDestBasePath(), link.path);
@@ -43,15 +51,15 @@ function symlinkAction(link: SymlinkSpec): CustomActionFunction {
 }
 
 /**
- * Register the `init` generator on a plop instance. Sub-generators
- * (`add agent`, `add tool`, ...) follow this same shape: build a
- * TemplateFile[] and map it through `toAction`.
+ * Register a generator on a plop instance. Every command (`init`,
+ * `add agents`, future `add tool/...`) builds a {@link GeneratorSpec} and
+ * registers it here — one shared engine. Files are written first (so a
+ * symlink target like CLAUDE.md exists), then symlinks.
  */
-export function registerInit(plop: NodePlopAPI, stack: Stack): void {
-  plop.setGenerator("init", {
-    description: `Scaffold a ${stack} project`,
+export function registerGenerator(plop: NodePlopAPI, spec: GeneratorSpec): void {
+  plop.setGenerator(spec.name, {
+    description: spec.description,
     prompts: [],
-    // Files first (CLAUDE.md is written here), then symlinks that point at them.
-    actions: [...filesFor(stack).map(toAction), ...SYMLINKS.map(symlinkAction)],
+    actions: [...spec.files.map(toAction), ...(spec.symlinks ?? []).map(symlinkAction)],
   });
 }

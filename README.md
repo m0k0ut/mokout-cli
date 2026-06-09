@@ -42,6 +42,20 @@ mokout init --js         # JavaScript project
 mokout init --dry-run    # print what would be created, write nothing
 ```
 
+### Add just the agent files to an existing project
+
+Already have a project and only want it agent-ready? `add agents` drops in
+`CLAUDE.md`, the `AGENTS.md` symlink, and `tasks/` — no package manager, git,
+or tooling changes:
+
+```bash
+mokout add agents            # add CLAUDE.md + AGENTS.md + tasks/ here
+mokout add agents --dry-run  # preview
+```
+
+Idempotent: re-running appends the doctrine to `CLAUDE.md` and leaves
+everything else untouched.
+
 After scaffolding:
 
 ```bash

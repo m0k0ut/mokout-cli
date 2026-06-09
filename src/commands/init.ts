@@ -1,7 +1,7 @@
 import * as p from "@clack/prompts";
 import { Command, Option } from "clipanion";
 import nodePlop from "node-plop";
-import { registerInit } from "../generators/init";
+import { registerGenerator } from "../generators/engine";
 import { exists, hasCommand, run } from "../lib/exec";
 import { SYMLINKS, type Stack, filesFor } from "../templates";
 
@@ -73,7 +73,12 @@ export class InitCommand extends Command {
     const s = p.spinner();
     s.start("Writing project files");
     const plop = await nodePlop(undefined, { destBasePath: cwd, force: false });
-    registerInit(plop, stack);
+    registerGenerator(plop, {
+      name: "init",
+      description: `Scaffold a ${stack} project`,
+      files: filesFor(stack),
+      symlinks: SYMLINKS,
+    });
     await plop.getGenerator("init").runActions({});
     s.stop("Files written");
 

@@ -23,11 +23,20 @@ export interface SymlinkSpec {
 // single source of truth so every agent reads the same project doctrine.
 export const SYMLINKS: SymlinkSpec[] = [{ path: "AGENTS.md", target: "CLAUDE.md" }];
 
-const SHARED: TemplateFile[] = [
-  { path: ".editorconfig", content: EDITORCONFIG, mode: "skip" },
-  { path: ".env.example", content: ENV_EXAMPLE, mode: "skip" },
+// The agent layer: task tracking + the CLAUDE.md doctrine. CLAUDE.md is last
+// and "append" so re-runs add the doctrine without clobbering an existing file
+// (and so it exists before the AGENTS.md symlink that points at it). This is
+// exactly what `mokout add agents` drops into an existing project.
+const AGENT_FILES: TemplateFile[] = [
   { path: "tasks/todo.md", content: TASKS_TODO, mode: "skip" },
   { path: "tasks/lessons.md", content: TASKS_LESSONS, mode: "skip" },
+  { path: "CLAUDE.md", content: CLAUDE_MD, mode: "append" },
+];
+
+// General project hygiene, written by `init` only.
+const PROJECT_FILES: TemplateFile[] = [
+  { path: ".editorconfig", content: EDITORCONFIG, mode: "skip" },
+  { path: ".env.example", content: ENV_EXAMPLE, mode: "skip" },
 ];
 
 const STACK: Record<Stack, TemplateFile[]> = {
@@ -47,10 +56,12 @@ const STACK: Record<Stack, TemplateFile[]> = {
   ],
 };
 
-// CLAUDE.md is appended last so re-running mokout adds the doctrine without
-// clobbering an existing file.
-const CLAUDE_FILE: TemplateFile = { path: "CLAUDE.md", content: CLAUDE_MD, mode: "append" };
+/** Just the agent layer — used by `mokout add agents`. */
+export function agentFiles(): TemplateFile[] {
+  return [...AGENT_FILES];
+}
 
+/** Everything for a full project — used by `mokout init`. */
 export function filesFor(stack: Stack): TemplateFile[] {
-  return [...SHARED, ...STACK[stack], CLAUDE_FILE];
+  return [...PROJECT_FILES, ...STACK[stack], ...AGENT_FILES];
 }

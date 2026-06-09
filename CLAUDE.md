@@ -3,8 +3,8 @@
 > This file is for agents/developers working **on the mokout CLI itself**.
 > It is **not** the CLAUDE.md that mokout writes into scaffolded projects —
 > that template lives in `src/templates/claude.ts`. Do not confuse the two,
-> and never run `mokout init` inside this repo (it would append the template
-> doctrine to *this* file).
+> and never run `mokout init` or `mokout add agents` inside this repo (either
+> would append the template doctrine to *this* file).
 >
 > `AGENTS.md` at the repo root is a symlink to this file, so non-Claude agents
 > read the same doctrine. mokout creates the same `AGENTS.md -> CLAUDE.md`
@@ -32,16 +32,18 @@ Run via `npx mokout init` — no install required.
 
 ```
 src/
-├── cli.ts              # Clipanion entry: registers commands + builtins
-├── commands/init.ts    # InitCommand — flags, clack prompts, orchestration
-├── generators/init.ts  # registerInit(): maps templates → node-plop actions
-├── lib/exec.ts         # exists() / hasCommand() / run() helpers
+├── cli.ts                  # Clipanion entry: registers commands + builtins
+├── commands/
+│   ├── init.ts             # InitCommand — full project scaffold
+│   └── add-agents.ts       # AddAgentsCommand — `mokout add agents`
+├── generators/engine.ts    # registerGenerator(spec): templates → node-plop actions
+├── lib/exec.ts             # exists() / hasCommand() / run() helpers
 └── templates/
-    ├── index.ts        # filesFor(stack) → TemplateFile[]  (the manifest)
-    ├── claude.ts       # CLAUDE_MD emitted into scaffolded projects
-    ├── shared.ts       # files common to every stack
-    ├── python.ts       # uv + ruff + lefthook + just
-    └── javascript.ts   # npm + biome + lefthook + just
+    ├── index.ts            # the manifest: agentFiles(), filesFor(stack), SYMLINKS
+    ├── claude.ts           # CLAUDE_MD emitted into scaffolded projects
+    ├── shared.ts           # editorconfig / env / tasks content
+    ├── python.ts           # uv + ruff + lefthook + just
+    └── javascript.ts       # npm + biome + lefthook + just
 ```
 
 Templates are **inline string constants**, bundled into `dist/cli.js` by tsup.
@@ -58,10 +60,12 @@ CLAUDE.md). Nothing else to wire up.
 **Add a new stack:** add a `Stack` member and a `STACK[...]` entry in
 `src/templates/index.ts`, plus a `src/templates/<stack>.ts` module.
 
-**Add a sub-generator** (the planned `mokout add agent/tool/...`): add a
-Clipanion command under `src/commands/`, build its `TemplateFile[]`, and map it
-through the same `toAction` shape used by `registerInit` in
-`src/generators/init.ts`. The generator engine is already shared.
+**Add a sub-generator** (`mokout add tool/...`): copy `src/commands/add-agents.ts`
+as the template. Add a Clipanion command (path like `["add", "<thing>"]`), build
+a `TemplateFile[]` + optional `SymlinkSpec[]`, and hand them to
+`registerGenerator(plop, spec)` from `src/generators/engine.ts` — the one shared
+engine both `init` and `add agents` use. Register the command in `src/cli.ts`.
+`mokout add agents` is the worked example.
 
 ## Dev commands
 
