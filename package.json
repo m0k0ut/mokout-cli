@@ -1,0 +1,35 @@
+{
+  "name": "mokout",
+  "version": "0.1.0",
+  "description": "Quick scaffolding for agentic AI projects — uv/npm, Claude-ready CLAUDE.md, and modern tooling in one command.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Mohan Tupakula <tmskoushik@gmail.com>",
+  "bin": {
+    "mokout": "dist/cli.js"
+  },
+  "files": ["dist"],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "clipanion": "4.0.0-rc.4",
+    "node-plop": "^0.32.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.0",
+    "lefthook": "^1.10.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}
