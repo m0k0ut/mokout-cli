@@ -1,4 +1,4 @@
-# mokout
+# mokout-cli
 
 Quick scaffolding for agentic AI projects. One command sets up version control,
 a package manager, and a Claude-ready `CLAUDE.md` — a lean, essentials-only
