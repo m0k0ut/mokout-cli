@@ -18,14 +18,44 @@ npx mokout init
 - **`AGENTS.md`** → symlinked to `CLAUDE.md`, so any agent reads one source of truth
 - **`.claude/settings.json`** — a permission allowlist for the project's safe commands, so Claude Code runs them without prompting
 - **`tasks/`** — structured `todo.md` + `lessons.md`, referenced by the doctrine
-- **Lint + format config** — [ruff](https://docs.astral.sh/ruff/) (in `pyproject.toml`) or [Biome](https://biomejs.dev/) (`biome.json`)
+- **Lint + format config** — [ruff](https://docs.astral.sh/ruff/) (folded into `pyproject.toml`) or [Biome](https://biomejs.dev/) (`biome.json`)
 - **`.gitignore`** + **`.env.example`**
 
 That's it — no `justfile`, hooks, or CI cruft. It is **idempotent and safe**:
 existing files are never overwritten. The `CLAUDE.md` doctrine lives in a managed
-block (`<!-- mokout:doctrine -->`) that mokout updates in place on re-run — any
-content you add around it is preserved. Run it in a fresh directory or an
-existing project.
+block that mokout updates in place on re-run — any content you add around it is
+preserved. Run it in a fresh directory or an existing project.
+
+## Output
+
+**Python** (`mokout init --python`) — 10 files:
+
+```
+pyproject.toml          # uv project + [tool.ruff] + pytest/ruff dev deps
+.python-version
+uv.lock
+.gitignore
+.env.example
+CLAUDE.md
+AGENTS.md → CLAUDE.md
+.claude/settings.json
+tasks/todo.md
+tasks/lessons.md
+```
+
+**JavaScript** (`mokout init --js`) — 9 files:
+
+```
+package.json
+biome.json
+.gitignore
+.env.example
+CLAUDE.md
+AGENTS.md → CLAUDE.md
+.claude/settings.json
+tasks/todo.md
+tasks/lessons.md
+```
 
 ## Usage
 
