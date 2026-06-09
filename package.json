@@ -4,6 +4,7 @@
   "description": "Quick scaffolding for agentic AI projects — uv/npm, Claude-ready CLAUDE.md, and modern tooling in one command.",
   "type": "module",
   "license": "MIT",
+  "packageManager": "pnpm@8.15.6",
   "author": "Mohan Tupakula <tmskoushik@gmail.com>",
   "bin": {
     "mokout": "dist/cli.js"
