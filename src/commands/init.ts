@@ -3,7 +3,7 @@ import { Command, Option } from "clipanion";
 import nodePlop from "node-plop";
 import { registerInit } from "../generators/init";
 import { exists, hasCommand, run } from "../lib/exec";
-import { type Stack, filesFor } from "../templates";
+import { SYMLINKS, type Stack, filesFor } from "../templates";
 
 export class InitCommand extends Command {
   static override paths = [["init"], Command.Default];
@@ -37,10 +37,14 @@ export class InitCommand extends Command {
     }
 
     const files = filesFor(stack);
+    const links = SYMLINKS.map((l) => `${l.path} -> ${l.target}`);
     const initCmd = stack === "javascript" ? "npm init -y" : "uv init";
 
     if (this.dryRun) {
-      p.note(["git init", initCmd, ...files.map((f) => f.path)].join("\n"), "Would create");
+      p.note(
+        ["git init", initCmd, ...files.map((f) => f.path), ...links].join("\n"),
+        "Would create",
+      );
       p.outro("Dry run — nothing written.");
       return 0;
     }
@@ -73,7 +77,10 @@ export class InitCommand extends Command {
     await plop.getGenerator("init").runActions({});
     s.stop("Files written");
 
-    p.note(files.map((f) => `• ${f.path}`).join("\n"), `Scaffolded (${stack})`);
+    p.note(
+      [...files.map((f) => `• ${f.path}`), ...links.map((l) => `• ${l}`)].join("\n"),
+      `Scaffolded (${stack})`,
+    );
     p.outro("Done. Review CLAUDE.md, then run `just` to see project commands.");
     return 0;
   }

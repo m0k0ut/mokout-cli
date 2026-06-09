@@ -1,7 +1,7 @@
-import { appendFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, symlinkSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import type { ActionType, CustomActionFunction, NodePlopAPI } from "node-plop";
-import { type Stack, type TemplateFile, filesFor } from "../templates";
+import { SYMLINKS, type Stack, type SymlinkSpec, type TemplateFile, filesFor } from "../templates";
 
 // Turn a "create, or append if present" file into a node-plop custom action.
 // node-plop's built-in `append` requires the file to already exist, so we
@@ -25,6 +25,23 @@ function toAction(file: TemplateFile): ActionType {
   return { type: "add", path: file.path, template: file.content, skipIfExists: true };
 }
 
+// Create a relative symlink (portable across clone/move). Idempotent, and never
+// fails the scaffold: a filesystem that disallows symlinks (e.g. Windows without
+// Developer Mode) is reported and skipped rather than aborting init.
+function symlinkAction(link: SymlinkSpec): CustomActionFunction {
+  return (_answers, _config, plop) => {
+    const dest = join(plop.getDestBasePath(), link.path);
+    try {
+      symlinkSync(link.target, dest);
+      return `linked ${link.path} -> ${link.target}`;
+    } catch (err) {
+      const code = (err as NodeJS.ErrnoException).code;
+      if (code === "EEXIST") return `skipped ${link.path} (exists)`;
+      return `skipped ${link.path} (symlink unsupported: ${code})`;
+    }
+  };
+}
+
 /**
  * Register the `init` generator on a plop instance. Sub-generators
  * (`add agent`, `add tool`, ...) follow this same shape: build a
@@ -34,6 +51,7 @@ export function registerInit(plop: NodePlopAPI, stack: Stack): void {
   plop.setGenerator("init", {
     description: `Scaffold a ${stack} project`,
     prompts: [],
-    actions: filesFor(stack).map(toAction),
+    // Files first (CLAUDE.md is written here), then symlinks that point at them.
+    actions: [...filesFor(stack).map(toAction), ...SYMLINKS.map(symlinkAction)],
   });
 }

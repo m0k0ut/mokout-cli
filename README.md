@@ -15,6 +15,7 @@ npx mokout init
 - **`git init`** — version-controlled from the first commit
 - **Package manager** — [`uv`](https://docs.astral.sh/uv/) (Python) or `npm` (JavaScript)
 - **`CLAUDE.md`** — a workflow doctrine for Claude / coding agents (created, or appended if one exists)
+- **`AGENTS.md`** — symlinked to `CLAUDE.md`, so any agent following the cross-tool standard reads the same doctrine
 - **`tasks/`** — `todo.md` + `lessons.md`, referenced by the workflow doctrine
 - **Modern tooling** — see below
 - **`.env.example`** + **`.editorconfig`**

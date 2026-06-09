@@ -5,6 +5,10 @@
 > that template lives in `src/templates/claude.ts`. Do not confuse the two,
 > and never run `mokout init` inside this repo (it would append the template
 > doctrine to *this* file).
+>
+> `AGENTS.md` at the repo root is a symlink to this file, so non-Claude agents
+> read the same doctrine. mokout creates the same `AGENTS.md -> CLAUDE.md`
+> symlink in every scaffolded project (see `SYMLINKS` in `src/templates/index.ts`).
 
 ## What mokout is
 

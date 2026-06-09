@@ -12,6 +12,17 @@ export interface TemplateFile {
   mode: "skip" | "append";
 }
 
+export interface SymlinkSpec {
+  /** Link to create, e.g. "AGENTS.md". */
+  path: string;
+  /** Relative target the link points at, e.g. "CLAUDE.md". */
+  target: string;
+}
+
+// AGENTS.md is the cross-agent standard; pointing it at CLAUDE.md keeps a
+// single source of truth so every agent reads the same project doctrine.
+export const SYMLINKS: SymlinkSpec[] = [{ path: "AGENTS.md", target: "CLAUDE.md" }];
+
 const SHARED: TemplateFile[] = [
   { path: ".editorconfig", content: EDITORCONFIG, mode: "skip" },
   { path: ".env.example", content: ENV_EXAMPLE, mode: "skip" },
