@@ -19,10 +19,10 @@ export class InitCommand extends Command {
   static override usage = Command.Usage({
     description: "Scaffold an agentic AI project: uv/npm, CLAUDE.md, and modern tooling.",
     examples: [
-      ["Interactive (asks for stack)", "miracle init"],
-      ["Python project", "miracle init --python"],
-      ["JavaScript project", "miracle init --js"],
-      ["Preview without writing", "miracle init --dry-run"],
+      ["Interactive (asks for stack)", "mokout init"],
+      ["Python project", "mokout init --python"],
+      ["JavaScript project", "mokout init --js"],
+      ["Preview without writing", "mokout init --dry-run"],
     ],
   });
 
@@ -36,7 +36,7 @@ export class InitCommand extends Command {
 
   async execute(): Promise<number> {
     const cwd = process.cwd();
-    p.intro("miracle init");
+    p.intro("mokout init");
 
     const stack = await this.resolveStack();
     if (stack === null) {
