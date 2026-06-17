@@ -7,7 +7,12 @@
   "packageManager": "pnpm@8.15.6",
   "author": "Mohan Tupakula <tmskoushik@gmail.com>",
   "bin": {
-    "mokout": "dist/cli.js"
+    "mokout": "dist/cli.js",
+    "miracle": "dist/cli.js",
+    "akash": "dist/cli.js",
+    "sangeeta": "dist/cli.js",
+    "poorna": "dist/cli.js",
+    "vijay": "dist/cli.js"
   },
   "files": ["dist"],
   "engines": {
