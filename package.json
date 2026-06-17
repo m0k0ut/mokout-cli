@@ -1,6 +1,6 @@
 {
   "name": "mokout",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Quick scaffolding for agentic AI projects — uv/npm, Claude-ready CLAUDE.md, and modern tooling in one command.",
   "type": "module",
   "license": "MIT",
