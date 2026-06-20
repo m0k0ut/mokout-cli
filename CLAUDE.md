@@ -14,7 +14,7 @@
 
 A scaffolding CLI for agentic AI projects. `mokout init` sets up a lean,
 essentials-only project in one command: version control, a package manager
-(uv for Python, npm for JS), a Claude-ready `CLAUDE.md` (+ `AGENTS.md` symlink),
+(uv for Python, bun for JS), a Claude-ready `CLAUDE.md` (+ `AGENTS.md` symlink),
 `tasks/`, `.claude/settings.json`, and lint config (ruff in pyproject / biome).
 No justfile/hooks/CI cruft — kept deliberately minimal.
 
@@ -27,7 +27,7 @@ Run via `npx mokout init` — no install required.
 - **Prompts:** [@clack/prompts](https://github.com/bombshell-dev/clack) — all interactive UX
 - **Generation engine:** [node-plop](https://plopjs.com/) — file actions; templates are inline strings
 - **Build:** tsup → `dist/cli.js` (single ESM bundle + shebang)
-- **Package manager:** pnpm
+- **Package manager:** bun
 - **Lint/format:** Biome · **Hooks:** lefthook
 
 ## Layout
@@ -45,7 +45,7 @@ src/
     ├── claude.ts           # DOCTRINE emitted into scaffolded projects
     ├── shared.ts           # env / tasks content
     ├── python.ts           # uv + ruff (ruff config folded into pyproject.toml)
-    └── javascript.ts       # npm + biome
+    └── javascript.ts       # bun + biome
 ```
 
 Templates are **inline string constants**, bundled into `dist/cli.js` by tsup.
@@ -75,11 +75,11 @@ engine both `init` and `add agents` use. Register the command in `src/cli.ts`.
 ## Dev commands
 
 ```bash
-pnpm install        # deps
-pnpm build          # tsup → dist/cli.js
-pnpm typecheck      # tsc --noEmit
-pnpm lint           # biome check .
-pnpm format         # biome check --write .
+bun install         # deps
+bun run build       # tsup → dist/cli.js
+bun run typecheck   # tsc --noEmit
+bun run lint        # biome check .
+bun run format      # biome check --write .
 ```
 
 ## Verification (do this before calling anything done)
@@ -87,7 +87,7 @@ pnpm format         # biome check --write .
 Templates for tools we don't run can silently rot. Prove the real path:
 
 ```bash
-pnpm build
+bun run build
 TMP=$(mktemp -d); cd "$TMP"
 node "$OLDPWD/dist/cli.js" init --python        # then --js, then re-run for idempotency
 uvx ruff check . && uvx ruff format --check .    # Python lint path must pass

@@ -13,7 +13,7 @@ npx mokout init
 `mokout init` scaffolds the current directory with **only the essentials**:
 
 - **`git init`** — version-controlled from the first commit
-- **Package manager** — [`uv`](https://docs.astral.sh/uv/) (Python, with `pytest` + `ruff` dev deps) or `npm` (JavaScript)
+- **Package manager** — [`uv`](https://docs.astral.sh/uv/) (Python, with `pytest`, `ruff`, `pyrefly` dev deps) or `bun` (JavaScript, with `@biomejs/biome` dev dep)
 - **`CLAUDE.md`** — a workflow doctrine for coding agents, auto-tailored with a **Project Setup** section (your actual lint/test commands) and a **Definition of Done**
 - **`AGENTS.md`** → symlinked to `CLAUDE.md`, so any agent reads one source of truth
 - **`.claude/settings.json`** — a permission allowlist for the project's safe commands, so Claude Code runs them without prompting
@@ -91,7 +91,7 @@ npm install -g mokout
 ## Requirements
 
 - Node ≥ 18 (for `npx`)
-- [`uv`](https://docs.astral.sh/uv/) on PATH for Python projects; `npm` for JavaScript
+- [`uv`](https://docs.astral.sh/uv/) on PATH for Python projects; `bun` for JavaScript
 
 ## License
 

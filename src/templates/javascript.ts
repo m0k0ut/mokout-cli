@@ -1,4 +1,4 @@
-// JavaScript/Node stack: npm + biome.
+// JavaScript/Bun stack: bun + biome.
 
 export const GITIGNORE = `node_modules/
 dist/
@@ -30,14 +30,14 @@ export const BIOME_JSON = `{
 // agents need (auto-populated because mokout set this tooling up).
 export const SETUP = `## Project Setup
 
-- **Stack:** JavaScript (npm + Biome)
-- **Run:** \`node <file>\` · **Add deps:** \`npm install <pkg>\`
-- **Lint + format:** \`npx biome check .\` / \`npx biome check --write .\`
-- **Test:** \`npm test\`
+- **Stack:** JavaScript (Bun + Biome)
+- **Run:** \`bun run <file>\` · **Add deps:** \`bun add <pkg>\`
+- **Lint + format:** \`bunx biome check .\` / \`bunx biome check --write .\`
+- **Test:** \`bun test\`
 
 ## Definition of Done
 
-- \`npx biome check .\` and \`npm test\` pass
+- \`bunx biome check .\` and \`bun test\` pass
 - No secrets committed — use \`.env\` (see \`.env.example\`)
 - Change is minimal and verified (see "Verification Before Done")`;
 
@@ -46,12 +46,12 @@ export const SETUP = `## Project Setup
 export const SETTINGS_JSON = `{
   "permissions": {
     "allow": [
-      "Bash(npm run:*)",
-      "Bash(npm test:*)",
-      "Bash(npm install:*)",
-      "Bash(npm ci:*)",
-      "Bash(npx biome:*)",
-      "Bash(node:*)",
+      "Bash(bun run:*)",
+      "Bash(bun test:*)",
+      "Bash(bun add:*)",
+      "Bash(bun install:*)",
+      "Bash(bunx biome:*)",
+      "Bash(bun:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)"

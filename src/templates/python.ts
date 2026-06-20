@@ -30,11 +30,12 @@ export const SETUP = `## Project Setup
 - **Stack:** Python (uv + ruff)
 - **Run:** \`uv run <script>\` · **Add deps:** \`uv add <pkg>\`
 - **Lint + format:** \`uv run ruff check .\` / \`uv run ruff format .\`
+- **Type check:** \`uv run pyrefly .\`
 - **Test:** \`uv run pytest\`
 
 ## Definition of Done
 
-- \`uv run ruff check .\` and \`uv run pytest\` pass
+- \`uv run ruff check .\`, \`uv run pyrefly .\` and \`uv run pytest\` pass
 - No secrets committed — use \`.env\` (see \`.env.example\`)
 - Change is minimal and verified (see "Verification Before Done")`;
 
@@ -46,6 +47,7 @@ export const SETTINGS_JSON = `{
       "Bash(uv:*)",
       "Bash(uvx:*)",
       "Bash(ruff:*)",
+      "Bash(pyrefly:*)",
       "Bash(pytest:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",

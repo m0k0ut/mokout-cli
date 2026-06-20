@@ -10,8 +10,9 @@ import { RUFF_PYPROJECT } from "../templates/python";
 // .python-version, lose the boilerplate.
 const UV_BOILERPLATE = ["hello.py", "main.py", "README.md"];
 
-// Dev tooling the scaffold's commands need (`uv run pytest`, `uv run ruff`).
-const PY_DEV_DEPS = ["pytest", "ruff"];
+// Dev tooling the scaffold's commands need (`uv run pytest`, `uv run ruff`, `uv run pyrefly`).
+const PY_DEV_DEPS = ["pytest", "ruff", "pyrefly"];
+const JS_DEV_DEPS = ["@biomejs/biome"];
 
 export class InitCommand extends Command {
   static override paths = [["init"], Command.Default];
@@ -50,7 +51,7 @@ export class InitCommand extends Command {
     const links = SYMLINKS.map((l) => `${l.path} -> ${l.target}`);
     const steps =
       stack === "javascript"
-        ? ["npm init -y"]
+        ? ["bun init -y", `bun add --dev ${JS_DEV_DEPS.join(" ")}`]
         : ["uv init", `uv add --dev ${PY_DEV_DEPS.join(" ")}`];
 
     if (this.dryRun) {
@@ -65,11 +66,20 @@ export class InitCommand extends Command {
     // 2. Package manager scaffold (skip if already initialized).
     if (stack === "javascript") {
       if (!exists(cwd, "package.json")) {
-        if (!hasCommand("npm")) {
-          p.cancel("npm not found on PATH.");
+        if (!hasCommand("bun")) {
+          p.cancel("bun not found on PATH.");
           return 1;
         }
-        run("npm", ["init", "-y"], cwd);
+        run("bun", ["init", "-y"], cwd);
+        
+        const dep = p.spinner();
+        dep.start(`Adding dev dependencies (${JS_DEV_DEPS.join(", ")})`);
+        try {
+          run("bun", ["add", "--dev", ...JS_DEV_DEPS], cwd);
+          dep.stop(`Dev dependencies added (${JS_DEV_DEPS.join(", ")})`);
+        } catch {
+          dep.stop(`Skipped dev deps — run \`bun add --dev ${JS_DEV_DEPS.join(" ")}\` (offline?)`);
+        }
       }
     } else if (!exists(cwd, "pyproject.toml")) {
       if (!hasCommand("uv")) {
@@ -136,7 +146,7 @@ export class InitCommand extends Command {
       initialValue: "python" as Stack,
       options: [
         { value: "python" as Stack, label: "Python", hint: "uv + ruff" },
-        { value: "javascript" as Stack, label: "JavaScript", hint: "npm + biome" },
+        { value: "javascript" as Stack, label: "JavaScript", hint: "bun + biome" },
       ],
     });
     return p.isCancel(choice) ? null : choice;
