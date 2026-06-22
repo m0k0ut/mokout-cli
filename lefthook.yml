@@ -1,10 +1,10 @@
-# lefthook — git hooks for the mokout repo. Run `bunx lefthook install` once.
+# lefthook — git hooks for the mokout repo. Run `pnpm exec lefthook install` once.
 pre-commit:
   parallel: true
   commands:
     biome:
       glob: "*.{js,ts,json}"
-      run: bunx biome check --write {staged_files}
+      run: pnpm exec biome check --write {staged_files}
       stage_fixed: true
     typecheck:
-      run: bun run typecheck
+      run: pnpm run typecheck

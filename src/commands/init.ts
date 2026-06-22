@@ -15,15 +15,15 @@ const PY_DEV_DEPS = ["pytest", "ruff", "pyrefly"];
 const JS_DEV_DEPS = ["@biomejs/biome"];
 
 export class InitCommand extends Command {
-  static override paths = [["init"], Command.Default];
+  static override paths = [["project", "init"]];
 
   static override usage = Command.Usage({
     description: "Scaffold an agentic AI project: uv/npm, CLAUDE.md, and modern tooling.",
     examples: [
-      ["Interactive (asks for stack)", "mokout init"],
-      ["Python project", "mokout init --python"],
-      ["JavaScript project", "mokout init --js"],
-      ["Preview without writing", "mokout init --dry-run"],
+      ["Interactive (asks for stack)", "mokout project init"],
+      ["Python project", "mokout project init --python"],
+      ["JavaScript project", "mokout project init --js"],
+      ["Preview without writing", "mokout project init --dry-run"],
     ],
   });
 
@@ -37,7 +37,7 @@ export class InitCommand extends Command {
 
   async execute(): Promise<number> {
     const cwd = process.cwd();
-    p.intro("mokout init");
+    p.intro("mokout project init");
 
     const stack = await this.resolveStack();
     if (stack === null) {
@@ -51,7 +51,7 @@ export class InitCommand extends Command {
     const links = SYMLINKS.map((l) => `${l.path} -> ${l.target}`);
     const steps =
       stack === "javascript"
-        ? ["bun init -y", `bun add --dev ${JS_DEV_DEPS.join(" ")}`]
+        ? ["npm init -y", `npm install --save-dev ${JS_DEV_DEPS.join(" ")}`]
         : ["uv init", `uv add --dev ${PY_DEV_DEPS.join(" ")}`];
 
     if (this.dryRun) {
@@ -66,19 +66,21 @@ export class InitCommand extends Command {
     // 2. Package manager scaffold (skip if already initialized).
     if (stack === "javascript") {
       if (!exists(cwd, "package.json")) {
-        if (!hasCommand("bun")) {
-          p.cancel("bun not found on PATH.");
+        if (!hasCommand("npm")) {
+          p.cancel("npm not found on PATH.");
           return 1;
         }
-        run("bun", ["init", "-y"], cwd);
-        
+        run("npm", ["init", "-y"], cwd);
+
         const dep = p.spinner();
         dep.start(`Adding dev dependencies (${JS_DEV_DEPS.join(", ")})`);
         try {
-          run("bun", ["add", "--dev", ...JS_DEV_DEPS], cwd);
+          run("npm", ["install", "--save-dev", ...JS_DEV_DEPS], cwd);
           dep.stop(`Dev dependencies added (${JS_DEV_DEPS.join(", ")})`);
         } catch {
-          dep.stop(`Skipped dev deps — run \`bun add --dev ${JS_DEV_DEPS.join(" ")}\` (offline?)`);
+          dep.stop(
+            `Skipped dev deps — run \`npm install --save-dev ${JS_DEV_DEPS.join(" ")}\` (offline?)`,
+          );
         }
       }
     } else if (!exists(cwd, "pyproject.toml")) {
@@ -124,8 +126,26 @@ export class InitCommand extends Command {
     await plop.getGenerator("init").runActions({});
     s.stop("Files written");
 
+    const cloneSpinner = p.spinner();
+    cloneSpinner.start("Adding agent-skills to .agents/skills");
+    try {
+      if (!exists(cwd, ".agents/skills")) {
+        run(
+          "git",
+          ["clone", "--depth", "1", "https://github.com/addyosmani/agent-skills", ".agents/skills"],
+          cwd,
+        );
+        remove(cwd, ".agents/skills/.git");
+      }
+      cloneSpinner.stop("Added agent-skills to .agents/skills");
+    } catch {
+      cloneSpinner.stop("Skipped agent-skills (offline?)");
+    }
+
     p.note(
-      [...paths.map((f) => `• ${f}`), ...links.map((l) => `• ${l}`)].join("\n"),
+      [...paths.map((f) => `• ${f}`), ...links.map((l) => `• ${l}`), "• .agents/skills/"].join(
+        "\n",
+      ),
       `Scaffolded (${stack})`,
     );
     p.outro("Done. CLAUDE.md lists the project commands; AGENTS.md mirrors it.");
@@ -146,7 +166,7 @@ export class InitCommand extends Command {
       initialValue: "python" as Stack,
       options: [
         { value: "python" as Stack, label: "Python", hint: "uv + ruff" },
-        { value: "javascript" as Stack, label: "JavaScript", hint: "bun + biome" },
+        { value: "javascript" as Stack, label: "JavaScript", hint: "npm + biome" },
       ],
     });
     return p.isCancel(choice) ? null : choice;

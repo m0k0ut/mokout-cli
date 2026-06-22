@@ -1,19 +1,19 @@
 # mokout-cli
 
 Quick scaffolding for agentic AI projects. One command sets up version control,
-a package manager, and a Claude-ready `CLAUDE.md` — a lean, essentials-only
+a package manager, and a Coding Agent-ready `AGENTS.md` — a lean, essentials-only
 starter so you can build instead of configure.
 
 ```bash
-npx mokout init
+npx mokout project init
 ```
 
 ## What it does
 
-`mokout init` scaffolds the current directory with **only the essentials**:
+`mokout project init` scaffolds the current directory with **only the essentials**:
 
 - **`git init`** — version-controlled from the first commit
-- **Package manager** — [`uv`](https://docs.astral.sh/uv/) (Python, with `pytest`, `ruff`, `pyrefly` dev deps) or `bun` (JavaScript, with `@biomejs/biome` dev dep)
+- **Package manager** — [`uv`](https://docs.astral.sh/uv/) (Python, with `pytest`, `ruff`, `pyrefly` dev deps) or `npm` (JavaScript, with `@biomejs/biome` dev dep)
 - **`CLAUDE.md`** — a workflow doctrine for coding agents, auto-tailored with a **Project Setup** section (your actual lint/test commands) and a **Definition of Done**
 - **`AGENTS.md`** → symlinked to `CLAUDE.md`, so any agent reads one source of truth
 - **`.claude/settings.json`** — a permission allowlist for the project's safe commands, so Claude Code runs them without prompting
@@ -28,7 +28,7 @@ preserved. Run it in a fresh directory or an existing project.
 
 ## Output
 
-**Python** (`mokout init --python`) — 10 files:
+**Python** (`mokout project init --python`) — 10 files:
 
 ```
 pyproject.toml          # uv project + [tool.ruff] + pytest/ruff dev deps
@@ -41,9 +41,10 @@ AGENTS.md → CLAUDE.md
 .claude/settings.json
 tasks/todo.md
 tasks/lessons.md
+.agents/skills/
 ```
 
-**JavaScript** (`mokout init --js`) — 9 files:
+**JavaScript** (`mokout project init --js`) — 9 files:
 
 ```
 package.json
@@ -55,26 +56,27 @@ AGENTS.md → CLAUDE.md
 .claude/settings.json
 tasks/todo.md
 tasks/lessons.md
+.agents/skills/
 ```
 
 ## Usage
 
 ```bash
-mokout init              # interactive — asks Python or JavaScript
-mokout init --python     # Python project
-mokout init --js         # JavaScript project
-mokout init --dry-run    # print what would be created, write nothing
+mokout project init              # interactive — asks Python or JavaScript
+mokout project init --python     # Python project
+mokout project init --js         # JavaScript project
+mokout project init --dry-run    # print what would be created, write nothing
 ```
 
 ### Add just the agent files to an existing project
 
-Already have a project and only want it agent-ready? `add agents` drops in
+Already have a project and only want it agent-ready? `code-fast init` drops in
 `CLAUDE.md`, the `AGENTS.md` symlink, and `tasks/` — no package manager, git, or
 tooling changes:
 
 ```bash
-mokout add agents            # add CLAUDE.md + AGENTS.md + tasks/ here
-mokout add agents --dry-run  # preview
+mokout code-fast init            # add CLAUDE.md + AGENTS.md + tasks/ here
+mokout code-fast init --dry-run  # preview
 ```
 
 Idempotent: re-running refreshes the doctrine's managed block in `CLAUDE.md`
@@ -82,7 +84,7 @@ and leaves everything else (including your own notes) untouched.
 
 ## Install
 
-No install needed — `npx mokout init` runs the latest version. To install globally:
+No install needed — `npx mokout project init` runs the latest version. To install globally:
 
 ```bash
 npm install -g mokout
@@ -91,7 +93,7 @@ npm install -g mokout
 ## Requirements
 
 - Node ≥ 18 (for `npx`)
-- [`uv`](https://docs.astral.sh/uv/) on PATH for Python projects; `bun` for JavaScript
+- [`uv`](https://docs.astral.sh/uv/) on PATH for Python projects; `npm` for JavaScript
 
 ## License
 

@@ -1,5 +1,5 @@
 import { Builtins, Cli } from "clipanion";
-import { AddAgentsCommand } from "./commands/add-agents";
+import { CodeFastInitCommand } from "./commands/code-fast-init";
 import { InitCommand } from "./commands/init";
 
 const cli = new Cli({
@@ -9,7 +9,7 @@ const cli = new Cli({
 });
 
 cli.register(InitCommand);
-cli.register(AddAgentsCommand);
+cli.register(CodeFastInitCommand);
 cli.register(Builtins.HelpCommand);
 cli.register(Builtins.VersionCommand);
 

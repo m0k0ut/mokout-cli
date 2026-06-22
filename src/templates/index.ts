@@ -30,7 +30,7 @@ export interface SymlinkSpec {
 // agent one source of truth without adding more files.
 export const SYMLINKS: SymlinkSpec[] = [{ path: "AGENTS.md", target: "CLAUDE.md" }];
 
-// CLAUDE.md doctrine region — shared by `init` and `add agents`.
+// CLAUDE.md doctrine region — shared by `project init` and `code-fast init`.
 const DOCTRINE_FILE: TemplateFile = {
   path: "CLAUDE.md",
   content: DOCTRINE,
@@ -39,7 +39,7 @@ const DOCTRINE_FILE: TemplateFile = {
 };
 
 // The agent layer: task tracking + the doctrine. Doctrine is last so the file
-// exists before the symlinks that point at it. This is what `add agents` drops
+// exists before the symlinks that point at it. This is what `code-fast init` drops
 // into an existing project.
 const AGENT_FILES: TemplateFile[] = [
   { path: "tasks/todo.md", content: TASKS_TODO, mode: "skip" },
@@ -47,15 +47,15 @@ const AGENT_FILES: TemplateFile[] = [
   DOCTRINE_FILE,
 ];
 
-// General project hygiene, written by `init` only.
+// General project hygiene, written by `project init` only.
 const PROJECT_FILES: TemplateFile[] = [
   { path: ".env.example", content: ENV_EXAMPLE, mode: "skip" },
 ];
 
-// Stack-specific extras `init` adds on top of the agent layer: a second managed
+// Stack-specific extras `project init` adds on top of the agent layer: a second managed
 // region in CLAUDE.md with concrete project commands, plus a Claude Code
-// permission allowlist. `add agents` does not write these (it doesn't know the
-// stack), and the separate "project" marker means re-running `add agents` never
+// permission allowlist. `code-fast init` does not write these (it doesn't know the
+// stack), and the separate "project" marker means re-running `code-fast init` never
 // disturbs this region.
 const STACK_AGENT_EXTRAS: Record<Stack, TemplateFile[]> = {
   python: [
@@ -78,12 +78,12 @@ const STACK: Record<Stack, TemplateFile[]> = {
   ],
 };
 
-/** Just the agent layer — used by `mokout add agents`. */
+/** Just the agent layer — used by `mokout code-fast init`. */
 export function agentFiles(): TemplateFile[] {
   return [...AGENT_FILES];
 }
 
-/** Everything for a full project — used by `mokout init`. */
+/** Everything for a full project — used by `mokout project init`. */
 export function filesFor(stack: Stack): TemplateFile[] {
   return [...PROJECT_FILES, ...STACK[stack], ...AGENT_FILES, ...STACK_AGENT_EXTRAS[stack]];
 }

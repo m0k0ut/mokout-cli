@@ -23,7 +23,7 @@ export function appendText(cwd: string, rel: string, text: string): void {
 
 /** Delete `rel` under `cwd` if present (no error if missing). */
 export function remove(cwd: string, rel: string): void {
-  rmSync(join(cwd, rel), { force: true });
+  rmSync(join(cwd, rel), { force: true, recursive: true });
 }
 
 /** True if `cmd` is resolvable on PATH. */

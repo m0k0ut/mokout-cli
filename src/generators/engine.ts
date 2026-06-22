@@ -73,8 +73,8 @@ function symlinkAction(link: SymlinkSpec): CustomActionFunction {
 }
 
 /**
- * Register a generator on a plop instance. Every command (`init`,
- * `add agents`, future `add tool/...`) builds a {@link GeneratorSpec} and
+ * Register a generator on a plop instance. Every command (`project init`,
+ * `code-fast init`, future `add tool/...`) builds a {@link GeneratorSpec} and
  * registers it here — one shared engine. Files are written first (so a
  * symlink target like CLAUDE.md exists), then symlinks.
  */
