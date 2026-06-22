@@ -5,7 +5,7 @@ a package manager, and a Coding Agent-ready `AGENTS.md` — a lean, essentials-o
 starter so you can build instead of configure.
 
 ```bash
-npx mokout project init
+npx mokout-cli project init
 ```
 
 ## What it does
@@ -84,10 +84,10 @@ and leaves everything else (including your own notes) untouched.
 
 ## Install
 
-No install needed — `npx mokout project init` runs the latest version. To install globally:
+No install needed — `npx mokout-cli project init` runs the latest version. To install globally:
 
 ```bash
-npm install -g mokout
+npm install -g mokout-cli
 ```
 
 ## Requirements

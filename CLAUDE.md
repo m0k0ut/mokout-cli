@@ -18,7 +18,7 @@ essentials-only project in one command: version control, a package manager
 `tasks/`, `.claude/settings.json`, and lint config (ruff in pyproject / biome).
 No justfile/hooks/CI cruft — kept deliberately minimal.
 
-Run via `npx mokout project init` — no install required.
+Run via `npx mokout-cli project init` — no install required.
 
 ## Stack
 
