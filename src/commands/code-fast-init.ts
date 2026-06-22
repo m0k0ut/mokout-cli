@@ -53,28 +53,7 @@ export class CodeFastInitCommand extends Command {
     await plop.getGenerator("code-fast-init").runActions({});
     s.stop("Agent files added");
 
-    const cloneSpinner = p.spinner();
-    cloneSpinner.start("Adding agent-skills to .agents/skills");
-    try {
-      if (!exists(cwd, ".agents/skills")) {
-        run(
-          "git",
-          ["clone", "--depth", "1", "https://github.com/addyosmani/agent-skills", ".agents/skills"],
-          cwd,
-        );
-        remove(cwd, ".agents/skills/.git");
-      }
-      cloneSpinner.stop("Added agent-skills to .agents/skills");
-    } catch {
-      cloneSpinner.stop("Skipped agent-skills (offline?)");
-    }
-
-    p.note(
-      [...paths.map((f) => `• ${f}`), ...links.map((l) => `• ${l}`), "• .agents/skills/"].join(
-        "\n",
-      ),
-      "Added",
-    );
+    p.note([...paths.map((f) => `• ${f}`), ...links.map((l) => `• ${l}`)].join("\n"), "Added");
     p.outro("Done. CLAUDE.md holds the doctrine; AGENTS.md mirrors it for other agents.");
     return 0;
   }

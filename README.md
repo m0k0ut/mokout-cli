@@ -41,7 +41,6 @@ AGENTS.md → CLAUDE.md
 .claude/settings.json
 tasks/todo.md
 tasks/lessons.md
-.agents/skills/
 ```
 
 **JavaScript** (`mokout project init --js`) — 9 files:
@@ -56,7 +55,6 @@ AGENTS.md → CLAUDE.md
 .claude/settings.json
 tasks/todo.md
 tasks/lessons.md
-.agents/skills/
 ```
 
 ## Usage

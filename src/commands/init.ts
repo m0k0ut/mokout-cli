@@ -126,26 +126,8 @@ export class InitCommand extends Command {
     await plop.getGenerator("init").runActions({});
     s.stop("Files written");
 
-    const cloneSpinner = p.spinner();
-    cloneSpinner.start("Adding agent-skills to .agents/skills");
-    try {
-      if (!exists(cwd, ".agents/skills")) {
-        run(
-          "git",
-          ["clone", "--depth", "1", "https://github.com/addyosmani/agent-skills", ".agents/skills"],
-          cwd,
-        );
-        remove(cwd, ".agents/skills/.git");
-      }
-      cloneSpinner.stop("Added agent-skills to .agents/skills");
-    } catch {
-      cloneSpinner.stop("Skipped agent-skills (offline?)");
-    }
-
     p.note(
-      [...paths.map((f) => `• ${f}`), ...links.map((l) => `• ${l}`), "• .agents/skills/"].join(
-        "\n",
-      ),
+      [...paths.map((f) => `• ${f}`), ...links.map((l) => `• ${l}`)].join("\n"),
       `Scaffolded (${stack})`,
     );
     p.outro("Done. CLAUDE.md lists the project commands; AGENTS.md mirrors it.");
