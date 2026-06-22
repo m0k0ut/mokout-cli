@@ -27,7 +27,7 @@ Run via `npx mokout project init` — no install required.
 - **Prompts:** [@clack/prompts](https://github.com/bombshell-dev/clack) — all interactive UX
 - **Generation engine:** [node-plop](https://plopjs.com/) — file actions; templates are inline strings
 - **Build:** tsup → `dist/cli.js` (single ESM bundle + shebang)
-- **Package manager:** pnpm
+- **Package manager:** npm
 - **Lint/format:** Biome · **Hooks:** lefthook
 
 ## Layout
@@ -75,11 +75,11 @@ engine both `project init` and `code-fast init` use. Register the command in `sr
 ## Dev commands
 
 ```bash
-pnpm install        # deps
-pnpm run build      # tsup → dist/cli.js
-pnpm run typecheck  # tsc --noEmit
-pnpm run lint       # biome check .
-pnpm run format     # biome check --write .
+npm install        # deps
+npm run build      # tsup → dist/cli.js
+npm run typecheck  # tsc --noEmit
+npm run lint       # biome check .
+npm run format     # biome check --write .
 ```
 
 ## Verification (do this before calling anything done)
@@ -87,7 +87,7 @@ pnpm run format     # biome check --write .
 Templates for tools we don't run can silently rot. Prove the real path:
 
 ```bash
-pnpm run build
+npm run build
 TMP=$(mktemp -d); cd "$TMP"
 node "$OLDPWD/dist/cli.js" project init --python        # then --js, then re-run for idempotency
 uvx ruff check . && uvx ruff format --check .    # Python lint path must pass
