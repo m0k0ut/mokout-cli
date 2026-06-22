@@ -80,6 +80,71 @@ mokout code-fast init --dry-run  # preview
 Idempotent: re-running refreshes the doctrine's managed block in `CLAUDE.md`
 and leaves everything else (including your own notes) untouched.
 
+### Advanced Agent Workflows (via google/agents-cli)
+
+`mokout-cli` installs and seamlessly wraps the [`google/agents-cli`](https://github.com/google/agents-cli) toolkit, providing deep capabilities for evaluating, testing, and deploying coding agents. All `agents-cli` commands are proxied through `mokout agents`.
+
+**CLI Commands**
+| Command | What it does |
+|---------|--------------|
+| `mokout agents setup` | Install CLI + skills to coding agents (runs automatically on install) |
+| `mokout agents scaffold <name>` | Create a new agent project |
+| `mokout agents eval generate` | Run agent on eval dataset, produce traces |
+| `mokout agents eval grade` | Run agent evaluations on the traces |
+| `mokout agents deploy` | Deploy to Google Cloud |
+| `mokout agents publish gemini-enterprise` | Register with Gemini Enterprise |
+
+**See all commands**
+| Command | Description |
+|---------|-------------|
+| `mokout agents login` | Authenticate with Google Cloud or AI Studio |
+| `mokout agents login --status` | Show authentication status |
+
+**Scaffold**
+| Command | Description |
+|---------|-------------|
+| `mokout agents scaffold <name>` | Create a new agent project |
+| `mokout agents scaffold enhance` | Add deployment, CI/CD, or RAG to an existing project |
+| `mokout agents scaffold upgrade` | Upgrade project to a newer agents-cli version |
+
+**Develop**
+| Command | Description |
+|---------|-------------|
+| `mokout agents run "prompt"` | Run agent with a single prompt |
+| `mokout agents install` | Install project dependencies |
+| `mokout agents lint` | Run code quality checks (Ruff) |
+
+**Evaluate**
+| Command | Description |
+|---------|-------------|
+| `mokout agents eval generate` | Run agent inference over eval cases |
+| `mokout agents eval grade` | Grade generated traces against metrics |
+| `mokout agents eval dataset synthesize` | Synthesize multi-turn eval scenarios for your local agent |
+| `mokout agents eval compare` | Compare two eval result files |
+| `mokout agents eval analyze` | Cluster failure modes from grade results |
+| `mokout agents eval metric list` | List available metrics |
+| `mokout agents eval optimize` | Auto-tune agent prompts using eval data |
+
+**Deploy & Publish**
+| Command | Description |
+|---------|-------------|
+| `mokout agents deploy` | Deploy to Google Cloud |
+| `mokout agents publish gemini-enterprise` | Register with Gemini Enterprise |
+| `mokout agents infra single-project` | Provision single-project infrastructure |
+| `mokout agents infra cicd` | Set up CI/CD pipeline + staging/prod infrastructure |
+
+**Data**
+| Command | Description |
+|---------|-------------|
+| `mokout agents infra datastore` | Provision datastore infrastructure for RAG |
+| `mokout agents data-ingestion` | Run data ingestion pipeline |
+
+**Other**
+| Command | Description |
+|---------|-------------|
+| `mokout agents info` | Show project config and CLI version |
+| `mokout agents update` | Force reinstall skills to all IDEs |
+
 ## Install
 
 No install needed — `npx mokout project init` runs the latest version. To install globally:
