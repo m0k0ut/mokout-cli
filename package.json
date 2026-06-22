@@ -1,6 +1,6 @@
 {
   "name": "mokout-cli",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Quick scaffolding for agentic AI projects — uv/npm, Claude-ready CLAUDE.md, and modern tooling in one command.",
   "type": "module",
   "license": "MIT",
@@ -23,8 +23,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome check --write .",
-    "prepublishOnly": "npm run build",
-    "postinstall": "uv tool install google-agents-cli"
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",
